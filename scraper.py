@@ -2,21 +2,20 @@
 import datetime
 from datetime import timedelta
 
-dia_i = 28  # int(input("Dia inicio: "))
-mes_i = 5  # int(input("Mes inicio: "))
+dia_i = 1  # int(input("Dia inicio: "))
+mes_i = 1  # int(input("Mes inicio: "))
 anio_i = 2019  # int(input("Año inicio: "))
 
-dia_f = 9  # int(input("Dia fin: "))
-mes_f = 1  # int(input("Mes fin: "))
-anio_f = 2020  # int(input("Año fin: "))
+dia_f = 8  # int(input("Dia fin: "))
+mes_f = 2  # int(input("Mes fin: "))
+anio_f = 2019  # int(input("Año fin: "))
 
 sistema = "SIN"
 proceso = "MDA"
 nodo = "01PLO-115"
 formato = "JSON"
 
-url_base = "https://ws01.cenace.gob.mx:8082/SWPML/SIM/" + sistema + \
-    "/" + proceso + "/" + nodo + "/{}/{}/{}/{}/{}/{}/" + formato
+url_base = "https://ws01.cenace.gob.mx:8082/SWPML/SIM/" + sistema + "/" + proceso + "/" + nodo + "/{}/{}/{}/{}/{}/{}/" + formato
 
 #convierte en formato de fecha los valores ingresados en el inicio
 fecha_i = datetime.datetime(anio_i, mes_i, dia_i)
