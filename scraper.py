@@ -57,5 +57,6 @@ for i in range(0, int(rondas)):
     lista_urls.append(url_base.format(lista_1[i].year, f'{lista_1[i].month:02}', f'{lista_1[i].day:02}', lista_2[i].year, f'{lista_2[i].month:02}', f'{lista_2[i].day:02}'))
 
 lista_urls.append(url_base.format(lista_3[0].year, f'{lista_3[0].month:02}', f'{lista_3[0].day:02}', lista_3[-1].year, f'{lista_3[-1].month:02}', f'{lista_3[-1].day:02}'))
+
 for elem in lista_urls:
     print(elem)
