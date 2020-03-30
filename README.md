@@ -27,11 +27,11 @@ Ejemplo de URL de consulta: https://ws01.cenace.gob.mx:8082/SWPEND/SIM/SIN/MDA/A
 
 Las consultas solo pueden ser de una semana, por ejemplo; si quieres consultar del 1 al 31 de enero del NodoP "01PLO-115", se haran 5 consultas de la siguiente manera:
 
-  consulta 1: 1 al 7 de enero
-  consulta 2: 8 al 14 de enero
-  consulta 3: 15 al 21 de enero
-  consulta 4: 22 al 28 de enero
-  consulta 5: 29 al 31 de enero
+- consulta 1: 1 al 7 de enero
+- consulta 2: 8 al 14 de enero
+- consulta 3: 15 al 21 de enero
+- consulta 4: 22 al 28 de enero
+- consulta 5: 29 al 31 de enero
  
 Asi se verìan los URLS de los cuales se obtendrían los archivos JSON
  ['https://ws01.cenace.gob.mx:8082/SWPML/SIM/SIN/MDA/01PLO-115/2019/01/01/2019/01/07/JSON',
