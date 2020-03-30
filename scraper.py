@@ -3,13 +3,13 @@ import datetime
 from datetime import timedelta
 import pandas as pd
 
-dia_i = 1  # int(input("Dia inicio: "))
-mes_i = 1  # int(input("Mes inicio: "))
-anio_i = 2019  # int(input("Año inicio: "))
+dia_i = int(input("Dia inicio: "))
+mes_i = int(input("Mes inicio: "))
+anio_i = int(input("Año inicio: "))
 
-dia_f = 8  # int(input("Dia fin: "))
-mes_f = 2  # int(input("Mes fin: "))
-anio_f = 2019  # int(input("Año fin: "))
+dia_f = int(input("Dia fin: "))
+mes_f = int(input("Mes fin: "))
+anio_f = int(input("Año fin: "))
 
 sistema = "SIN"
 proceso = "MDA"
