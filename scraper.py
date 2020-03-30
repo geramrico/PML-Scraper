@@ -1,6 +1,8 @@
 #FECHA DE CREACION DE REPOSITORIO: 02 MARZO 2020
 import datetime
 from datetime import timedelta
+import pandas as pd
+
 
 dia_i = 1  # int(input("Dia inicio: "))
 mes_i = 1  # int(input("Mes inicio: "))
@@ -34,15 +36,11 @@ else:
 # con eso cubres los dias que no entran en las rondas (si plazo = 31, rondas = 4, dias_restantes = 3)
 dias_restantes = plazo - rondas * 7
 
+# crea listas de "inicio" y "fin" de los rangos de busqueda
+lista_1, lista_2 = list(), list()
 
-# lista con fechas de inicio de scraping
-lista_1 = list()
 for i in range(0, int(rondas)):
     lista_1.append((fecha_i + timedelta(days=(7*i))))
-
-# lista con fecha de cierre en el scraper
-lista_2 = list()
-for i in range(0, int(rondas)):
     lista_2.append((fecha_i + timedelta(days=(7*i)) + timedelta(days=6)))
 
 # considera los "dias restantes" que quedan fuera del rango
@@ -50,12 +48,22 @@ lista_3 = list()
 for i in range(0, int(dias_restantes)):
     lista_3.append(fecha_i + timedelta(days=7*rondas) + timedelta(days=i))
 
-
 lista_urls = list()
 for i in range(0, int(rondas)):
     lista_urls.append(url_base.format(lista_1[i].year, f'{lista_1[i].month:02}', f'{lista_1[i].day:02}', lista_2[i].year, f'{lista_2[i].month:02}', f'{lista_2[i].day:02}'))
 
 lista_urls.append(url_base.format(lista_3[0].year, f'{lista_3[0].month:02}', f'{lista_3[0].day:02}', lista_3[-1].year, f'{lista_3[-1].month:02}', f'{lista_3[-1].day:02}'))
 
-for elem in lista_urls:
-    print(elem)
+def url_into_df(url):
+    json = pd.read_json(url)["Resultados"][0]["Valores"]
+    data_frame  = pd.DataFrame(json)
+    
+    return data_frame 
+
+df = pd.DataFrame()
+
+for urlz in lista_urls:
+    df_nuevo = url_into_df(urlz)
+    df = pd.concat((df, df_nuevo))
+
+df.to_excel("ConsultaPML.xlsx")
