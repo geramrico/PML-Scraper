@@ -3,7 +3,6 @@ import datetime
 from datetime import timedelta
 import pandas as pd
 
-
 dia_i = 1  # int(input("Dia inicio: "))
 mes_i = 1  # int(input("Mes inicio: "))
 anio_i = 2019  # int(input("Año inicio: "))
