@@ -4,11 +4,36 @@
 # Hacer una GUI para seleccionar más facil la info
 # auto generacion de reporte sobre rango de consulta
 
+
+# MODULOS
 import datetime
 from datetime import timedelta
 import pandas as pd
 import re
 
+# -------------------------------
+
+# FUNCIONES
+
+
+# Convierte en lista el archivo con los nodos
+def txt_to_list(archivo_txt):
+    with open(archivo_txt) as archivo:
+        lineas = archivo.readlines()
+    lista_nodos = [linea.replace("\n", "") for linea in lineas]
+    return lista_nodos
+
+#Esta función convierte el contenido JSON del URL en una Data Frame
+def url_into_df(url):
+    json = pd.read_json(url)["Resultados"][0]["Valores"]
+    data_frame = pd.DataFrame(json)
+    return data_frame
+
+
+
+# ------------------------------------------------
+
+#Simplemente pide las fechas del plazo de la consulta
 dia_i = int(input("Dia inicio: "))
 mes_i = int(input("Mes inicio: "))
 anio_i = int(input("Año inicio: "))
@@ -17,42 +42,55 @@ dia_f = int(input("Dia fin: "))
 mes_f = int(input("Mes fin: "))
 anio_f = int(input("Año fin: "))
 
-
+#Seleccionar el sistema, aunque escribas en minuscula, lo convierte en mayuscula
 while True:
     sistema = input("SIN BCA o BCS: ").upper()
-    if sistema in ("SIN","BCA","BCS"):
+    if sistema in ("SIN", "BCA", "BCS"):
         break
     else:
         continue
 
+#Seleccionar si es MDA o MTR
 while True:
     proceso = input("MDA o MTR: ").upper()
-    if proceso in ("MDA","MTR"):
+    if proceso in ("MDA", "MTR"):
         break
     else:
         continue
 
+#Selecciona si es nodo P o nodo Distribuido
 while True:
     tipo_nodo = input("Nodo P o D: ").upper()
-    if tipo_nodo in ("P","D"):
+    if tipo_nodo in ("P", "D"):
         break
     else:
         continue
 
 if tipo_nodo == "D":
-    nodo = input("Introduce nombre nodo: ").upper()
+    tipo_request = "SWPEND"
+
+    while True:
+        nodo = input("Introduce nombre nodo: ").upper().replace(" ", "-")
+        if nodo in txt_to_list("nodosD.txt"):
+            break
+        else:
+            print("Nombre de nodo equivocado, intenta de nuevo:  ")
+            continue
 else:
+    tipo_request = "SWPML"
     while True:
         nodo = input("Inserta NodoP: ").upper()
-        if re.match('^[0-9]{2}[A-Z]{3}-[0-9]{3}$', nodo):
+        if re.match("^[0-9]{2}[A-Z]{3}-[0-9]{3}$", nodo):
             break
         else:
             print("El formato debe ser ##XXX-###")
             continue
 
-
+# Plantilla de URL para las consultas
 url_base = (
-    "https://ws01.cenace.gob.mx:8082/SWPML/SIM/"
+    "https://ws01.cenace.gob.mx:8082/"
+    + tipo_request
+    + "/SIM/"
     + sistema
     + "/"
     + proceso
@@ -86,7 +124,7 @@ for i in range(0, int(rondas)):
     lista_1.append((fecha_i + timedelta(days=(7 * i))))
     lista_2.append((fecha_i + timedelta(days=(7 * i)) + timedelta(days=6)))
 
-    # considera los "dias restantes" que quedan fuera del rango
+# considera los "dias restantes" que quedan fuera del rango
 lista_3 = list()
 for i in range(0, int(dias_restantes)):
     lista_3.append(fecha_i + timedelta(days=7 * rondas) + timedelta(days=i))
@@ -115,16 +153,8 @@ lista_urls.append(
     )
 )
 
-
-def url_into_df(url):
-    json = pd.read_json(url)["Resultados"][0]["Valores"]
-    data_frame = pd.DataFrame(json)
-
-    return data_frame
-
-
+#A un DataFrame vació le voy agregando los DataFrame de cada URL consultado
 df = pd.DataFrame()
-
 for urlz in lista_urls:
     df_nuevo = url_into_df(urlz)
     df = pd.concat((df, df_nuevo))
