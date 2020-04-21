@@ -16,7 +16,7 @@ Parámetros para la invocación del SW-PEND o SW-PML:
 
 - sistema: SIN, BCA o BCS
 - proceso MDA o MTR
-- lista_zc: clave de nodo o zona de carga (mayusculas y los espaciones son guines "VDM-NORTE" por ejemplo)
+- lista_zc: clave de nodo o zona de carga
 - año incial: año inicial del periodo AAAA
 - mes inicial: mes inicial del periodo MM
 - dia inicial: dia inicial del periodo DD
@@ -42,7 +42,7 @@ Asi se verìan los URLS de los cuales se obtendrían los archivos JSON
 4. 'https://ws01.cenace.gob.mx:8082/SWPML/SIM/SIN/MDA/01PLO-115/2019/01/22/2019/01/28/JSON'
 5. 'https://ws01.cenace.gob.mx:8082/SWPML/SIM/SIN/MDA/01PLO-115/2019/01/29/2019/01/31/JSON'
 
-Finalmente, el programa por cada URL crea un "Data Frame" utilizando la libería Pandas y los concatena; después los exporta a un archivo de Excel (xlsx) para la manipulación del usuario.
+Finalmente, el programa por cada URL crea un "Data Frame" utilizando la libería Pandas y los concatena; después los exporta a un archivo CSV para la manipulación del usuario.
 
 ***
 
