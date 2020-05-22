@@ -10,30 +10,42 @@ import datetime
 from datetime import timedelta
 import pandas as pd
 import re
+# from difflib import get_close_matches    --> vale la pena explorar esto
+import time
 
-# -------------------------------
+# =================================== FUNCIONES =========================================================== #
 
-# FUNCIONES
+# Convierte en lista el archivo con los nombres de nodos
+def txt_to_list(txt_file):
+    with open(txt_file) as file:
+        lines = file.readlines()
+    node_list = [line.replace("\n", "") for line in lines]
+    return node_list
 
 
-# Convierte en lista el archivo con los nodos
-def txt_to_list(archivo_txt):
-    with open(archivo_txt) as archivo:
-        lineas = archivo.readlines()
-    lista_nodos = [linea.replace("\n", "") for linea in lineas]
-    return lista_nodos
-
-#Esta función convierte el contenido JSON del URL en una Data Frame
+# Esta función convierte el contenido JSON del URL en una Data Frame
 def url_into_df(url):
     json = pd.read_json(url)["Resultados"][0]["Valores"]
     data_frame = pd.DataFrame(json)
     return data_frame
 
 
+# Crea una lista de URLs para el rango de fechas dado. Recordar que la API solo permite consultar hasta 7 días.
+def date_to_url(startDate, endDate, url):
+    url_list = []
+    x = startDate
+    while x <= endDate:
+        datestr = x.strftime("%Y/%m/%d")
+        delta = x + timedelta(days=6)
+        deltastr = delta.strftime("%Y/%m/%d")
+        url_list.append(url.format(datestr, deltastr))
+        x = delta + timedelta(days=1)
+    return url_list
 
-# ------------------------------------------------
 
-#Simplemente pide las fechas del plazo de la consulta
+# =================================== MAIN =========================================================== #
+
+# Simplemente pide las fechas del plazo de la consulta
 dia_i = int(input("Dia inicio: "))
 mes_i = int(input("Mes inicio: "))
 anio_i = int(input("Año inicio: "))
@@ -42,7 +54,9 @@ dia_f = int(input("Dia fin: "))
 mes_f = int(input("Mes fin: "))
 anio_f = int(input("Año fin: "))
 
-#Seleccionar el sistema, aunque escribas en minuscula, lo convierte en mayuscula
+nodoD_lista = txt_to_list("nodosD.txt")
+
+# Seleccionar el sistema, aunque escribas en minuscula, lo convierte en mayuscula
 while True:
     sistema = input("SIN BCA o BCS: ").upper()
     if sistema in ("SIN", "BCA", "BCS"):
@@ -50,7 +64,7 @@ while True:
     else:
         continue
 
-#Seleccionar si es MDA o MTR
+# Seleccionar si es MDA o MTR
 while True:
     proceso = input("MDA o MTR: ").upper()
     if proceso in ("MDA", "MTR"):
@@ -58,7 +72,7 @@ while True:
     else:
         continue
 
-#Selecciona si es nodo P o nodo Distribuido
+# Selecciona si es nodo P o nodo Distribuido
 while True:
     tipo_nodo = input("Nodo P o D: ").upper()
     if tipo_nodo in ("P", "D"):
@@ -76,6 +90,7 @@ if tipo_nodo == "D":
         else:
             print("Nombre de nodo equivocado, intenta de nuevo:  ")
             continue
+
 else:
     tipo_request = "SWPML"
     while True:
@@ -96,72 +111,33 @@ url_base = (
     + proceso
     + "/"
     + nodo
-    + "/{}/{}/{}/{}/{}/{}/"
+    + "/{}/{}/"
     + "JSON"
 )
 
 # convierte en formato de fecha los valores ingresados en el inicio
-fecha_i = datetime.datetime(anio_i, mes_i, dia_i)
-fecha_f = datetime.datetime(anio_f, mes_f, dia_f)
+start_date = datetime.datetime(anio_i, mes_i, dia_i)
+end_date = datetime.datetime(anio_f, mes_f, dia_f)
 
-# regresa la cantidad de dias entre la fecha de inicio y la fecha final
-plazo = (fecha_f - fecha_i).days + 1
+lista_urls = date_to_url(start_date, end_date, url_base)
 
-# si el plazo es menor a una semana, solo hará 1 ronda (consulta minima es de 1 semana)
-if plazo < 7:
-    rondas = 1
-    # si el plazo es mayor a 7 días, se asignan rondas = al ultimo numero multiplo de 7 en el plazo
-else:
-    rondas = (plazo - plazo % 7) / 7
-
-    # con eso cubres los dias que no entran en las rondas (si plazo = 31, rondas = 4, dias_restantes = 3)
-dias_restantes = plazo - rondas * 7
-
-# crea listas de "inicio" y "fin" de los rangos de busqueda
-lista_1, lista_2 = list(), list()
-
-for i in range(0, int(rondas)):
-    lista_1.append((fecha_i + timedelta(days=(7 * i))))
-    lista_2.append((fecha_i + timedelta(days=(7 * i)) + timedelta(days=6)))
-
-# considera los "dias restantes" que quedan fuera del rango
-lista_3 = list()
-for i in range(0, int(dias_restantes)):
-    lista_3.append(fecha_i + timedelta(days=7 * rondas) + timedelta(days=i))
-
-lista_urls = list()
-for i in range(0, int(rondas)):
-    lista_urls.append(
-        url_base.format(
-            lista_1[i].year,
-            f"{lista_1[i].month:02}",
-            f"{lista_1[i].day:02}",
-            lista_2[i].year,
-            f"{lista_2[i].month:02}",
-            f"{lista_2[i].day:02}",
-        )
-    )
-
-lista_urls.append(
-    url_base.format(
-        lista_3[0].year,
-        f"{lista_3[0].month:02}",
-        f"{lista_3[0].day:02}",
-        lista_3[-1].year,
-        f"{lista_3[-1].month:02}",
-        f"{lista_3[-1].day:02}",
-    )
-)
-
-#A un DataFrame vació le voy agregando los DataFrame de cada URL consultado
+# A un DataFrame vació le voy agregando los DataFrame de cada URL consultado
 df = pd.DataFrame()
 for urlz in lista_urls:
-    df_nuevo = url_into_df(urlz)
-    df = pd.concat((df, df_nuevo))
+    new_df = url_into_df(urlz)
+    df = pd.concat((df, new_df))
 
 
 df.to_csv(
-    "{} {}.{}.{} - {}.{}.{}.csv".format(
-        nodo, anio_i, mes_i, dia_i, anio_f, mes_f, dia_f
+    "{} {} {}.{}.{} - {}.{}.{}.csv".format(
+        nodo, proceso, anio_i, mes_i, dia_i, anio_f, mes_f, dia_f
     )
 )
+
+
+print(
+    "Se generó un archivo CSV con la consulta del nodo {} - {} de {} a {}".format(
+        nodo, proceso, start_date, end_date
+    )
+)
+time.sleep(7)
