@@ -85,7 +85,7 @@ if tipo_nodo == "D":
 
     while True:
         nodo = input("Introduce nombre nodo: ").upper().replace(" ", "-")
-        if nodo in txt_to_list("nodosD.txt"):
+        if nodo in nodoD_lista:
             break
         else:
             print("Nombre de nodo equivocado, intenta de nuevo:  ")
