@@ -53,8 +53,6 @@ Finalmente, el programa por cada URL crea un "Data Frame" utilizando la libería
 - [ ] Consulta con multiples parametros de "zona de carga"
 
 ### MANUALES:
-[Manual Técnico Uso de Servicio Web para descarga de Precios de Energía en Nodos Distribuidos (SW-PEND)]
-(https://www.cenace.gob.mx/DocsMEM/2020-01-14%20Manual%20T%C3%A9cnico%20SW-PEND.pdf)
+[Manual Técnico Uso de Servicio Web para descarga de Precios de Energía en Nodos Distribuidos (SW-PEND)](https://www.cenace.gob.mx/DocsMEM/2020-01-14%20Manual%20T%C3%A9cnico%20SW-PEND.pdf)
 
-[Manual Técnico Uso de Servicio Web para descarga de Precios Marginales Locales (SW-PML)]
-(https://www.cenace.gob.mx/DocsMEM/2020-01-14%20Manual%20T%C3%A9cnico%20SW-PML.pdf)
+[Manual Técnico Uso de Servicio Web para descarga de Precios Marginales Locales (SW-PML)](https://www.cenace.gob.mx/DocsMEM/2020-01-14%20Manual%20T%C3%A9cnico%20SW-PML.pdf)
